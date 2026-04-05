@@ -6,7 +6,8 @@ from contextlib import asynccontextmanager
 import os
 
 from database import init_db
-from routers import auth, users, strategies, watchlist
+from routers import auth, users, strategies, watchlist, bot
+app.include_router(bot.router, prefix="/api/bot", tags=["bot"])
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
