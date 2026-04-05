@@ -301,7 +301,40 @@ await Api.updateStrategy(id, { name: s.name, symbol: s.symbol, timeframe: curTf,
         await this.loadStrategies();
       } catch (e) { App.toast(e.message, 'error'); }
     };
-
+document.getElementById('bot-btn').onclick = async () => {
+  const btn = document.getElementById('bot-btn');
+  const bar = document.getElementById('bot-status-bar');
+  try {
+    const status = await Api.botStatus();
+    if (status.running) {
+      await Api.stopBot();
+      btn.textContent = 'Botu Başlat';
+      btn.className = 'btn-outline btn-sm';
+      bar.textContent = 'Bot durduruldu';
+    } else {
+      await Api.startBot(id);
+      btn.textContent = 'Botu Durdur';
+      btn.className = 'btn-danger btn-sm';
+      bar.textContent = 'Bot çalışıyor...';
+      botStatusInterval = setInterval(async () => {
+        const s = await Api.botStatus();
+        if (!s.running) { clearInterval(botStatusInterval); btn.textContent = 'Botu Başlat'; btn.className = 'btn-outline btn-sm'; }
+        bar.textContent = s.running ? `Sinyal: ${s.last_signal} | SMA1: ${s.sma1_val} | SMA2: ${s.sma2_val} | Bakiye: ${s.balance} USDT | İşlem: ${s.trades}` : 'Bot durdu';
+      }, 10000);
+    }
+  } catch (e) { App.toast(e.message, 'error'); }
+};
+let botStatusInterval;
+Api.botStatus().then(s => {
+  const btn = document.getElementById('bot-btn');
+  const bar = document.getElementById('bot-status-bar');
+  if (!btn) return;
+  if (s.running) {
+    btn.textContent = 'Botu Durdur';
+    btn.className = 'btn-danger btn-sm';
+    bar.textContent = `Çalışıyor: ${s.symbol} ${s.timeframe}`;
+  }
+}).catch(() => {});
     det.querySelector('.note-tabs').addEventListener('click', e => {
       const t = e.target.closest('.ntab'); if (!t) return;
       const n = parseInt(t.dataset.n);
