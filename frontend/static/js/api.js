@@ -95,6 +95,6 @@ const Binance = {
   }
 };
 // Bot
-Api.startBot = (strategy_id) => Api.post('/api/bot/start', { strategy_id });
+Api.startBot = (strategy_id, trade_amount) => Api.post('/api/bot/start', { strategy_id, trade_amount });
 Api.stopBot  = () => Api.post('/api/bot/stop');
 Api.botStatus = () => Api.get('/api/bot/status');
