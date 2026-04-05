@@ -156,6 +156,7 @@ const StrategyPage = {
       <div class="status-bar"><div class="sdot" id="sdot"></div><span id="stxt">Veri yükleniyor...</span>
         <button class="btn-outline btn-sm" id="rbtn">↻</button>
         <button class="btn-primary btn-sm" id="save-bt-btn" style="width:auto;margin-left:auto;">Backtest Kaydet</button>
+        <input type="number" id="bot-amount" placeholder="USDT" min="5" style="width:80px;font-size:12px;padding:4px 6px;border:0.5px solid var(--border2);border-radius:6px;background:var(--bg2);color:var(--text);">
         <button class="btn-outline btn-sm" id="bot-btn" style="width:auto;">Botu Başlat</button>
 <span id="bot-status-bar" style="font-size:11px;color:var(--text2);"></span>
       </div>
@@ -312,7 +313,9 @@ document.getElementById('bot-btn').onclick = async () => {
       btn.className = 'btn-outline btn-sm';
       bar.textContent = 'Bot durduruldu';
     } else {
-      await Api.startBot(id);
+      const amount = parseFloat(document.getElementById('bot-amount').value);
+if (!amount || amount < 5) { App.toast('Minimum 5 USDT girin', 'error'); return; }
+await Api.startBot(id, amount);
       btn.textContent = 'Botu Durdur';
       btn.className = 'btn-danger btn-sm';
       bar.textContent = 'Bot çalışıyor...';
