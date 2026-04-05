@@ -248,6 +248,7 @@ def start_bot(
         "status": "starting",
         "strategy_id": body.strategy_id,
         "strategy_name": strategy["name"],
+        "trade_amount": body.trade_amount,
         "symbol": strategy["symbol"],
         "timeframe": strategy["timeframe"],
         "trades": 0,
