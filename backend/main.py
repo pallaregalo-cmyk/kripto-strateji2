@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Depends, HTTPException, status
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
@@ -7,7 +7,6 @@ import os
 
 from database import init_db
 from routers import auth, users, strategies, watchlist, bot
-app.include_router(bot.router, prefix="/api/bot", tags=["bot"])
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -28,6 +27,7 @@ app.include_router(auth.router,       prefix="/api/auth",       tags=["auth"])
 app.include_router(users.router,      prefix="/api/users",      tags=["users"])
 app.include_router(strategies.router, prefix="/api/strategies", tags=["strategies"])
 app.include_router(watchlist.router,  prefix="/api/watchlist",  tags=["watchlist"])
+app.include_router(bot.router,        prefix="/api/bot",        tags=["bot"])
 
 frontend_path = os.path.join(os.path.dirname(__file__), "..", "frontend")
 app.mount("/static", StaticFiles(directory=os.path.join(frontend_path, "static")), name="static")
