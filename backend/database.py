@@ -1,7 +1,7 @@
 import sqlite3
 import os
 
-DB_PATH = os.environ.get("DB_PATH", os.path.join(os.path.dirname(__file__), "kripto.db"))
+DB_PATH = "/app/data/kripto.db", os.path.join(os.path.dirname(__file__), "kripto.db"))
 
 def get_db():
     conn = sqlite3.connect(DB_PATH)
