@@ -189,8 +189,8 @@ def bot_loop(user_id, strategy):
                 active_bots[user_id]["balance"] = round(balance, 2)
 
                trade_amount = strategy.get("trade_amount", 10.0)
-                    if balance >= trade_amount:
-    open_position(symbol, signal, trade_amount, sl_pct, tp_pct)
+                if balance >= trade_amount:
+                    open_position(symbol, signal, trade_amount, sl_pct, tp_pct)
                     prev_signal = signal
                     active_bots[user_id]["trades"] = active_bots[user_id].get("trades", 0) + 1
                 else:
