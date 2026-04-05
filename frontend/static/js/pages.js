@@ -292,7 +292,8 @@ const StrategyPage = {
 
     document.getElementById('save-bt-btn').onclick = async () => {
       if (!this._lastBt || !this._lastBt.trades) { App.toast('Önce veri yükleyin ve çalıştırın', 'error'); return; }
-      try {
+      try { const gv = id2 => parseFloat(document.getElementById(id2)?.value) || 0;
+await Api.updateStrategy(id, { name: s.name, symbol: s.symbol, timeframe: curTf, days: curDays, sma1: gv('sma1'), sma2: gv('sma2'), rsi_period: gv('rsiP'), rsi_ob: gv('rsiOB'), rsi_os: gv('rsiOS'), stop_loss: gv('sl'), take_profit: gv('tp'), notes: s.notes });
         await Api.saveBacktest({ strategy_id: id, total_trades: this._lastBt.trades, win_rate: this._lastBt.wr, total_pnl: this._lastBt.pnl, max_drawdown: this._lastBt.mdd });
         App.toast('Backtest kaydedildi', 'success');
         await this.loadStrategies();
