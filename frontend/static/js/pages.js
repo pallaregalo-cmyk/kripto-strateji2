@@ -293,7 +293,7 @@ const StrategyPage = {
     document.getElementById('save-bt-btn').onclick = async () => {
       if (!this._lastBt || !this._lastBt.trades) { App.toast('Önce veri yükleyin ve çalıştırın', 'error'); return; }
       try {
-        await Api.saveBacktest({ strategy_id: id, ...this._lastBt, win_rate: this._lastBt.wr, total_pnl: this._lastBt.pnl, max_drawdown: this._lastBt.mdd, total_trades: this._lastBt.trades });
+        await Api.saveBacktest({ strategy_id: id, total_trades: this._lastBt.trades, win_rate: this._lastBt.wr, total_pnl: this._lastBt.pnl, max_drawdown: this._lastBt.mdd });
         App.toast('Backtest kaydedildi', 'success');
         await this.loadStrategies();
       } catch (e) { App.toast(e.message, 'error'); }
