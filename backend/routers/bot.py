@@ -219,6 +219,7 @@ def bot_loop(user_id, strategy):
 
 class BotStartIn(BaseModel):
     strategy_id: int
+    trade_amount: float = 10.0
 
 @router.post("/start")
 def start_bot(
