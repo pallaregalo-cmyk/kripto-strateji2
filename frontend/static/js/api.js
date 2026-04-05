@@ -94,3 +94,7 @@ const Binance = {
               .sort((a, b) => a[0] - b[0]);
   }
 };
+// Bot
+Api.startBot = (strategy_id) => Api.post('/api/bot/start', { strategy_id });
+Api.stopBot  = () => Api.post('/api/bot/stop');
+Api.botStatus = () => Api.get('/api/bot/status');
