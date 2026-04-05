@@ -156,6 +156,8 @@ const StrategyPage = {
       <div class="status-bar"><div class="sdot" id="sdot"></div><span id="stxt">Veri yükleniyor...</span>
         <button class="btn-outline btn-sm" id="rbtn">↻</button>
         <button class="btn-primary btn-sm" id="save-bt-btn" style="width:auto;margin-left:auto;">Backtest Kaydet</button>
+        <button class="btn-outline btn-sm" id="bot-btn" style="width:auto;">Botu Başlat</button>
+<span id="bot-status-bar" style="font-size:11px;color:var(--text2);"></span>
       </div>
       <div class="prog-wrap hidden" id="prog-wrap"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
       <div class="info-txt" id="cinfo"></div>
