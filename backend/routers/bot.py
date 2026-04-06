@@ -99,7 +99,19 @@ def close_position(symbol, position_amt):
 
 def open_position(symbol, side, usdt_amount, sl_pct, tp_pct):
     price = get_price(symbol)
-    qty = round(usdt_amount / price, 3)
+    
+    # Sembol için lot size bilgisi al
+    info = requests.get(f"{BASE_URL}/fapi/v1/exchangeInfo").json()
+    qty_precision = 0
+    for s in info["symbols"]:
+        if s["symbol"] == symbol:
+            for f in s["filters"]:
+                if f["filterType"] == "LOT_SIZE":
+                    step = f["stepSize"]
+                    qty_precision = len(step.rstrip("0").split(".")[-1]) if "." in step else 0
+            break
+    
+    qty = round(usdt_amount / price, qty_precision)
 
     r = signed_request("POST", "/fapi/v1/order", {
         "symbol": symbol,
@@ -111,11 +123,11 @@ def open_position(symbol, side, usdt_amount, sl_pct, tp_pct):
 
     sl_side = "SELL" if side == "BUY" else "BUY"
     if side == "BUY":
-        sl_price = round(price * (1 - sl_pct / 100), 2)
-        tp_price = round(price * (1 + tp_pct / 100), 2)
+        sl_price = round(price * (1 - sl_pct / 100), 4)
+        tp_price = round(price * (1 + tp_pct / 100), 4)
     else:
-        sl_price = round(price * (1 + sl_pct / 100), 2)
-        tp_price = round(price * (1 - tp_pct / 100), 2)
+        sl_price = round(price * (1 + sl_pct / 100), 4)
+        tp_price = round(price * (1 - tp_pct / 100), 4)
 
     r_sl = signed_request("POST", "/fapi/v1/order", {
         "symbol": symbol,
@@ -123,6 +135,7 @@ def open_position(symbol, side, usdt_amount, sl_pct, tp_pct):
         "type": "STOP_MARKET",
         "stopPrice": sl_price,
         "closePosition": "true",
+        "timeInForce": "GTC",
     })
     print(f"SL order: {r_sl.json()}")
 
@@ -132,6 +145,7 @@ def open_position(symbol, side, usdt_amount, sl_pct, tp_pct):
         "type": "TAKE_PROFIT_MARKET",
         "stopPrice": tp_price,
         "closePosition": "true",
+        "timeInForce": "GTC",
     })
     print(f"TP order: {r_tp.json()}")
     print(f"[{datetime.now()}] SL={sl_price} TP={tp_price}")
