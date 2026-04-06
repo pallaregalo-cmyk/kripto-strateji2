@@ -15,8 +15,11 @@ router = APIRouter()
 
 active_bots = {}
 
-BINANCE_API_KEY    = os.environ.get("BINANCE_API_KEY", "")
-BINANCE_SECRET_KEY = os.environ.get("BINANCE_SECRET_KEY", "")
+def get_api_key():
+    return os.environ.get("BINANCE_API_KEY", "")
+
+def get_secret_key():
+    return os.environ.get("BINANCE_SECRET_KEY", "")
 BASE_URL = "https://fapi.binance.com"
 
 def sign(params):
