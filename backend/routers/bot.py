@@ -173,7 +173,11 @@ def get_klines(symbol, interval, limit=250):
         f"{BASE_URL}/fapi/v1/klines",
         params={"symbol": symbol, "interval": interval, "limit": limit},
     )
-    return [float(k[4]) for k in r.json()]
+    data = r.json()
+    if not isinstance(data, list) or len(data) == 0:
+        print(f"Klines hatasi: {data}")
+        return []
+    return [float(k[4]) for k in data]
 
 
 def tf_to_seconds(tf):
