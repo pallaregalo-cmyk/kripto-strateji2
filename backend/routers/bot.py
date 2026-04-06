@@ -165,7 +165,12 @@ def tf_to_seconds(tf):
     }
     return mapping.get(tf, 900)
 
-
+import socket
+try:
+    my_ip = requests.get("https://api.ipify.org").text
+    print(f"Sunucu IP: {my_ip}")
+except:
+    pass
 def bot_loop(user_id, strategy):
     symbol = strategy["symbol"]
     timeframe = strategy["timeframe"]
