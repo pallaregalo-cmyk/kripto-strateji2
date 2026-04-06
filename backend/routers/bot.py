@@ -50,24 +50,33 @@ def get_symbol_info(symbol):
     global _exchange_info_cache
     if symbol in _exchange_info_cache:
         return _exchange_info_cache[symbol]
-    info = requests.get(f"{BASE_URL}/fapi/v1/exchangeInfo").json()
-    for s in info.get("symbols", []):
-        if s["symbol"] == symbol:
-            qty_step = 1.0
-            min_qty = 1.0
-            price_precision = s.get("pricePrecision", 4)
-            for f in s["filters"]:
-                if f["filterType"] == "LOT_SIZE":
-                    qty_step = float(f["stepSize"])
-                    min_qty = float(f["minQty"])
-            result = {
-                "qty_step": qty_step,
-                "min_qty": min_qty,
-                "price_precision": price_precision,
-            }
-            _exchange_info_cache[symbol] = result
-            return result
-    return {"qty_step": 1.0, "min_qty": 1.0, "price_precision": 4}
+    try:
+        info = requests.get(
+            f"{BASE_URL}/fapi/v1/exchangeInfo",
+            timeout=10
+        ).json()
+        for s in info.get("symbols", []):
+            if s["symbol"] == symbol:
+                qty_step = 1.0
+                min_qty = 1.0
+                price_precision = s.get("pricePrecision", 4)
+                for f in s["filters"]:
+                    if f["filterType"] == "LOT_SIZE":
+                        qty_step = float(f["stepSize"])
+                        min_qty = float(f["minQty"])
+                result = {
+                    "qty_step": qty_step,
+                    "min_qty": min_qty,
+                    "price_precision": price_precision,
+                }
+                print(f"Symbol info {symbol}: {result}")
+                _exchange_info_cache[symbol] = result
+                return result
+    except Exception as e:
+        print(f"ExchangeInfo hatasi: {e}")
+    default = {"qty_step": 1.0, "min_qty": 1.0, "price_precision": 4}
+    _exchange_info_cache[symbol] = default
+    return default
 
 
 def round_step(value, step):
