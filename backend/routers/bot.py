@@ -29,7 +29,7 @@ def sign(params):
     return query + "&signature=" + sig
 
 def bheaders():
-    return {"X-MBX-APIKEY": BINANCE_API_KEY}
+    return {"X-MBX-APIKEY": get_api_key()}
 
 def get_price(symbol):
     r = requests.get(f"{BASE_URL}/fapi/v1/ticker/price", params={"symbol": symbol})
