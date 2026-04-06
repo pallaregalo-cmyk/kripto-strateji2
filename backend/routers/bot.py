@@ -177,6 +177,9 @@ def get_klines(symbol, interval, limit=250):
     if not isinstance(data, list) or len(data) == 0:
         print(f"Klines hatasi: {data}")
         return []
+    if not isinstance(data[0], list):
+        print(f"Beklenmedik format: {data[0]}")
+        return []
     return [float(k[4]) for k in data]
 
 
