@@ -48,7 +48,11 @@ def get_balance():
         headers=bheaders(),
         params={**params, "signature": sign(params)},
     )
-    for asset in r.json():
+    data = r.json()
+    if not isinstance(data, list):
+        print(f"Balance hatasi: {data}")
+        return 0.0
+    for asset in data:
         if asset["asset"] == "USDT":
             return float(asset["availableBalance"])
     return 0.0
@@ -61,7 +65,11 @@ def get_position(symbol):
         headers=bheaders(),
         params={**params, "signature": sign(params)},
     )
-    for p in r.json():
+    data = r.json()
+    if not isinstance(data, list):
+        print(f"Position hatasi: {data}")
+        return 0.0
+    for p in data:
         if p["symbol"] == symbol:
             return float(p["positionAmt"])
     return 0.0
