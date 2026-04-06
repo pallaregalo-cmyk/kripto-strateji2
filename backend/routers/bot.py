@@ -99,56 +99,61 @@ def close_position(symbol, position_amt):
 
 def open_position(symbol, side, usdt_amount, sl_pct, tp_pct):
     price = get_price(symbol)
-    
-    # Sembol için lot size bilgisi al
+
+    # Lot size precision bul
     info = requests.get(f"{BASE_URL}/fapi/v1/exchangeInfo").json()
-    qty_precision = 0
-    for s in info["symbols"]:
+    qty_step = 1.0
+    price_precision = 4
+    for s in info.get("symbols", []):
         if s["symbol"] == symbol:
+            price_precision = s.get("pricePrecision", 4)
             for f in s["filters"]:
                 if f["filterType"] == "LOT_SIZE":
-                    step = f["stepSize"]
-                    qty_precision = len(step.rstrip("0").split(".")[-1]) if "." in step else 0
+                    qty_step = float(f["stepSize"])
             break
-    
-    qty = round(usdt_amount / price, qty_precision)
 
+    # Miktarı step size'a göre yuvarla
+    qty = round(usdt_amount / price / qty_step) * qty_step
+    qty = round(qty, 8)
+
+    # SL/TP fiyatları
+    sl_side = "SELL" if side == "BUY" else "BUY"
+    if side == "BUY":
+        sl_price = round(price * (1 - sl_pct / 100), price_precision)
+        tp_price = round(price * (1 + tp_pct / 100), price_precision)
+    else:
+        sl_price = round(price * (1 + sl_pct / 100), price_precision)
+        tp_price = round(price * (1 - tp_pct / 100), price_precision)
+
+    # Ana pozisyon aç
     r = signed_request("POST", "/fapi/v1/order", {
         "symbol": symbol,
         "side": side,
         "type": "MARKET",
         "quantity": qty,
     })
-    print(f"[{datetime.now()}] Pozisyon acildi {side} {qty} @ {price} → {r.json()}")
+    print(f"[{datetime.now()}] Pozisyon: {r.json()}")
 
-    sl_side = "SELL" if side == "BUY" else "BUY"
-    if side == "BUY":
-        sl_price = round(price * (1 - sl_pct / 100), 4)
-        tp_price = round(price * (1 + tp_pct / 100), 4)
-    else:
-        sl_price = round(price * (1 + sl_pct / 100), 4)
-        tp_price = round(price * (1 - tp_pct / 100), 4)
-
+    # SL
     r_sl = signed_request("POST", "/fapi/v1/order", {
         "symbol": symbol,
         "side": sl_side,
         "type": "STOP_MARKET",
         "stopPrice": sl_price,
         "closePosition": "true",
-        "timeInForce": "GTC",
     })
-    print(f"SL order: {r_sl.json()}")
+    print(f"SL: {r_sl.json()}")
 
+    # TP
     r_tp = signed_request("POST", "/fapi/v1/order", {
         "symbol": symbol,
         "side": sl_side,
         "type": "TAKE_PROFIT_MARKET",
         "stopPrice": tp_price,
         "closePosition": "true",
-        "timeInForce": "GTC",
     })
-    print(f"TP order: {r_tp.json()}")
-    print(f"[{datetime.now()}] SL={sl_price} TP={tp_price}")
+    print(f"TP: {r_tp.json()}")
+    print(f"SL={sl_price} TP={tp_price}")
 
 
 def sma(prices, period):
