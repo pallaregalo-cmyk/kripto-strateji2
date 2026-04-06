@@ -24,7 +24,8 @@ BASE_URL = "https://fapi.binance.com"
 
 def sign(params):
     query = "&".join(f"{k}={v}" for k, v in params.items())
-    sig = hmac.new(BINANCE_SECRET_KEY.encode(), query.encode(), hashlib.sha256).hexdigest()
+    secret = get_secret_key()
+    sig = hmac.new(secret.encode(), query.encode(), hashlib.sha256).hexdigest()
     return query + "&signature=" + sig
 
 def bheaders():
