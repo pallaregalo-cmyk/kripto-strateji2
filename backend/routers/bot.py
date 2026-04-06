@@ -238,8 +238,8 @@ def start_bot(
     if not strat:
         raise HTTPException(404, "Strateji bulunamadi")
 
-    if not BINANCE_API_KEY or not BINANCE_SECRET_KEY:
-        raise HTTPException(400, "Binance API key ayarlanmamis")
+    if not get_api_key() or not get_secret_key():
+    raise HTTPException(400, "Binance API key ayarlanmamis")
 
     strategy = dict(strat)
     strategy["trade_amount"] = body.trade_amount
