@@ -655,3 +655,66 @@ const ProfilePage = {
     } catch (e) { App.toast(e.message, 'error'); }
   }
 };
+const TradeHistoryPage = {
+  async render(el) {
+    el.innerHTML = `
+      <div class="page-header">
+        <div><div class="page-title">İşlem Geçmişi</div></div>
+      </div>
+      <div class="card" style="margin-bottom:14px;">
+        <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;">
+          <div class="field" style="margin:0;">
+            <label>Parite</label>
+            <input type="text" id="th-symbol" placeholder="BTCUSDT" style="width:130px;">
+          </div>
+          <div class="field" style="margin:0;">
+            <label>Başlangıç</label>
+            <input type="date" id="th-start">
+          </div>
+          <div class="field" style="margin:0;">
+            <label>Bitiş</label>
+            <input type="date" id="th-end">
+          </div>
+          <button class="btn-primary btn-sm" style="width:auto;" onclick="TradeHistoryPage.load()">Filtrele</button>
+        </div>
+      </div>
+      <div id="th-summary" class="metrics-grid" style="margin-bottom:14px;"></div>
+      <div class="card"><div id="th-table">Yükleniyor...</div></div>`;
+    this.load();
+  },
+
+  async load() {
+    const symbol = document.getElementById('th-symbol')?.value.trim() || null;
+    const start  = document.getElementById('th-start')?.value || null;
+    const end    = document.getElementById('th-end')?.value || null;
+    try {
+      const res = await Api.tradeHistory(symbol, start, end);
+      const s = res.summary;
+      document.getElementById('th-summary').innerHTML = `
+        <div class="met"><div class="met-l">Toplam İşlem</div><div class="met-v">${s.total}</div></div>
+        <div class="met"><div class="met-l">Kazanan</div><div class="met-v pos">${s.wins}</div></div>
+        <div class="met"><div class="met-l">Kaybeden</div><div class="met-v neg">${s.losses}</div></div>
+        <div class="met"><div class="met-l">Kazanç Oranı</div><div class="met-v">${s.win_rate}%</div></div>
+        <div class="met"><div class="met-l">Toplam P&L</div><div class="met-v ${s.total_pnl > 0 ? 'pos' : s.total_pnl < 0 ? 'neg' : ''}">${s.total_pnl > 0 ? '+' : ''}${s.total_pnl} USDT</div></div>`;
+      if (!res.trades.length) {
+        document.getElementById('th-table').innerHTML = '<div style="color:var(--text2);font-size:13px;">İşlem bulunamadı</div>';
+        return;
+      }
+      document.getElementById('th-table').innerHTML = `
+        <table class="history-table">
+          <tr><th>Parite</th><th>Yön</th><th>Giriş</th><th>Çıkış</th><th>Miktar</th><th>P&L</th><th>P&L %</th><th>Sebep</th><th>Tarih</th></tr>
+          ${res.trades.map(t => `<tr>
+            <td>${t.symbol}</td>
+            <td style="color:${t.side==='BUY'?'var(--green)':'var(--red)'};font-weight:500;">${t.side==='BUY'?'LONG':'SHORT'}</td>
+            <td>$${t.entry_price}</td>
+            <td>${t.exit_price ? '$'+t.exit_price : '—'}</td>
+            <td>${t.quantity}</td>
+            <td style="color:${(t.pnl||0)>0?'var(--green)':(t.pnl||0)<0?'var(--red)':'var(--text)'};font-weight:500;">${t.pnl != null ? (t.pnl>0?'+':'')+t.pnl+' USDT' : '—'}</td>
+            <td style="color:${(t.pnl_pct||0)>0?'var(--green)':(t.pnl_pct||0)<0?'var(--red)':'var(--text)'};">${t.pnl_pct != null ? (t.pnl_pct>0?'+':'')+t.pnl_pct+'%' : '—'}</td>
+            <td style="color:var(--text2);font-size:11px;">${t.close_reason || '—'}</td>
+            <td style="color:var(--text2);font-size:11px;">${new Date(t.opened_at).toLocaleDateString('tr-TR')}</td>
+          </tr>`).join('')}
+        </table>`;
+    } catch(e) { document.getElementById('th-table').innerHTML = '<div style="color:var(--red);">Hata: '+e.message+'</div>'; }
+  }
+};
