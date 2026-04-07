@@ -407,12 +407,27 @@ Api.botStatus().then(s => {
         <div class="field"><label>Veri Aralığı (gün)</label>
           <input type="number" id="e-days" value="${s ? s.days : 7}" min="1" max="730"></div>
       </div>
+      <div class="section-divider">Strateji Tipi</div>
+      <div class="field" style="grid-column:1/-1">
+      <label>Strateji Yöntemi</label>
+      <select id="e-stype" onchange="StrategyPage.toggleStrategyFields()">
+      <option value="sma"${!s || s.strategy_type==='sma' ? ' selected' : ''}>SMA Crossover</option>
+      <option value="bb"${s && s.strategy_type==='bb' ? ' selected' : ''}>Bollinger Bantları</option>
+      </select>
+      </div>
       <div class="section-divider">SMA Parametreleri</div>
       <div class="editor-grid">
         <div class="field"><label>Kısa SMA</label><input type="number" id="e-sma1" value="${s ? s.sma1 : 9}" min="3" max="50"></div>
         <div class="field"><label>Uzun SMA</label><input type="number" id="e-sma2" value="${s ? s.sma2 : 21}" min="5" max="200"></div>
       </div>
       <div class="section-divider">RSI Parametreleri</div>
+      <div id="e-bb-section" style="display:${s && s.strategy_type==='bb' ? 'block' : 'none'}">
+      <div class="section-divider">Bollinger Bant Parametreleri</div>
+      <div class="editor-grid">
+      <div class="field"><label>BB Periyodu</label><input type="number" id="e-bbp" value="${s ? s.bb_period || 20 : 20}" min="5" max="100"></div>
+      <div class="field"><label>Standart Sapma</label><input type="number" id="e-bbstd" value="${s ? s.bb_std || 2.0 : 2.0}" min="0.5" max="5" step="0.1"></div>
+      </div>
+      </div>
       <div class="editor-grid">
         <div class="field"><label>RSI Periyodu</label><input type="number" id="e-rsip" value="${s ? s.rsi_period : 14}" min="2" max="30"></div>
         <div class="field"><label>Aşırı Alım</label><input type="number" id="e-rsiob" value="${s ? s.rsi_ob : 70}" min="55" max="90"></div>
@@ -462,6 +477,9 @@ Api.botStatus().then(s => {
         stop_loss: parseFloat(document.getElementById('e-sl').value),
         take_profit: parseFloat(document.getElementById('e-tp').value),
         notes: document.getElementById('e-notes').value,
+        strategy_type: document.getElementById('e-stype').value,
+        bb_period: parseInt(document.getElementById('e-bbp')?.value || 20),
+        bb_std: parseFloat(document.getElementById('e-bbstd')?.value || 2.0),
       };
       try {
         if (id) await Api.updateStrategy(id, data);
@@ -473,6 +491,11 @@ Api.botStatus().then(s => {
     };
   },
 
+  toggleStrategyFields() {
+  const type = document.getElementById('e-stype')?.value;
+  const bbSection = document.getElementById('e-bb-section');
+  if (bbSection) bbSection.style.display = type === 'bb' ? 'block' : 'none';
+},
   async deleteStrategy(id) {
     if (!confirm('Bu stratejiyi silmek istediğinizden emin misiniz?')) return;
     try {
