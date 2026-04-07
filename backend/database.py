@@ -89,7 +89,19 @@ def init_db():
         closed_at    TEXT
     );
     """)
-
+try:
+        c.execute("ALTER TABLE strategies ADD COLUMN strategy_type TEXT DEFAULT 'sma'")
+    except:
+        pass
+    try:
+        c.execute("ALTER TABLE strategies ADD COLUMN bb_period INTEGER DEFAULT 20")
+    except:
+        pass
+    try:
+        c.execute("ALTER TABLE strategies ADD COLUMN bb_std REAL DEFAULT 2.0")
+    except:
+        pass
+    conn.commit()
     conn.commit()
     conn.close()
     print("✓ Veritabanı hazır:", DB_PATH)
