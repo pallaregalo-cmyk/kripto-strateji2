@@ -323,6 +323,16 @@ await Api.startBot(id, amount);
         const s = await Api.botStatus();
         if (!s.running) { clearInterval(botStatusInterval); btn.textContent = 'Botu Başlat'; btn.className = 'btn-outline btn-sm'; }
         bar.textContent = s.running ? `Sinyal: ${s.last_signal} | SMA1: ${s.sma1_val} | SMA2: ${s.sma2_val} | Bakiye: ${s.balance} USDT | İşlem: ${s.trades}` : 'Bot durdu';
+const posBar = document.getElementById('bot-position-bar');
+if (posBar) {
+  if (s.running && s.active_position) {
+    posBar.style.display = 'flex';
+    const ap = s.active_position;
+    document.getElementById('bp-info').textContent = `${ap.side} @ ${ap.entry_price} | SL: ${ap.sl_price} | TP: ${ap.tp_price} | Güncel: ${s.current_price || '—'}`;
+  } else {
+    posBar.style.display = 'none';
+  }
+}
       }, 10000);
     }
   } catch (e) { App.toast(e.message, 'error'); }
