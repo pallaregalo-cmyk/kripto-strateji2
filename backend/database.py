@@ -40,6 +40,9 @@ def init_db():
         stop_loss   REAL    NOT NULL DEFAULT 2.0,
         take_profit REAL    NOT NULL DEFAULT 4.0,
         notes       TEXT    DEFAULT '',
+        strategy_type TEXT DEFAULT 'sma',
+        bb_period     INTEGER DEFAULT 20,
+        bb_std        REAL    DEFAULT 2.0,
         created_at  TEXT    DEFAULT (datetime('now')),
         updated_at  TEXT    DEFAULT (datetime('now'))
     );
