@@ -54,10 +54,10 @@ def create_strategy(
     current_user: dict = Depends(get_current_user),
     db: sqlite3.Connection = Depends(get_db)
 ):
-cur = db.execute(
-    """INSERT INTO strategies
-       (user_id,name,symbol,timeframe,days,sma1,sma2,rsi_period,rsi_ob,rsi_os,stop_loss,take_profit,notes,strategy_type,bb_period,bb_std)
-       VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
+    cur = db.execute(
+        """INSERT INTO strategies
+           (user_id,name,symbol,timeframe,days,sma1,sma2,rsi_period,rsi_ob,rsi_os,stop_loss,take_profit,notes,strategy_type,bb_period,bb_std)
+           VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
     (current_user["id"], body.name, body.symbol, body.timeframe, body.days,
      body.sma1, body.sma2, body.rsi_period, body.rsi_ob, body.rsi_os,
      body.stop_loss, body.take_profit, body.notes, body.strategy_type, body.bb_period, body.bb_std)
