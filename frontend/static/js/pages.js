@@ -160,6 +160,13 @@ const StrategyPage = {
         <button class="btn-outline btn-sm" id="bot-btn" style="width:auto;">Botu Başlat</button>
 <span id="bot-status-bar" style="font-size:11px;color:var(--text2);"></span>
       </div>
+      <div id="bot-position-bar" style="display:none;background:var(--bg2);border-radius:8px;padding:8px 12px;margin-top:6px;font-size:12px;gap:10px;flex-wrap:wrap;align-items:center;">
+        <span id="bp-info" style="color:var(--text2);flex:1;"></span>
+        <input type="number" id="bp-sl" placeholder="Yeni SL" step="0.0001" style="width:90px;font-size:12px;padding:3px 6px;border:0.5px solid var(--border2);border-radius:6px;background:var(--bg);color:var(--text);">
+        <input type="number" id="bp-tp" placeholder="Yeni TP" step="0.0001" style="width:90px;font-size:12px;padding:3px 6px;border:0.5px solid var(--border2);border-radius:6px;background:var(--bg);color:var(--text);">
+        <button class="btn-outline btn-sm" id="bp-update-btn">SL/TP Güncelle</button>
+        <button class="btn-danger btn-sm" id="bp-close-btn">Pozisyonu Kapat</button>
+      </div>
       <div class="prog-wrap hidden" id="prog-wrap"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
       <div class="info-txt" id="cinfo"></div>
 
