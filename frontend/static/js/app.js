@@ -40,7 +40,7 @@ const App = {
     const pageEl = document.getElementById('page-' + page);
     if (pageEl) pageEl.classList.add('active');
     document.querySelector(`.navitem[data-page="${page}"]`)?.classList.add('active');
-    const pages = { dashboard: DashboardPage, strategy: StrategyPage, watchlist: WatchlistPage, profile: ProfilePage };
+    const pages = { dashboard: DashboardPage, strategy: StrategyPage, watchlist: WatchlistPage, profile: ProfilePage, history: TradeHistoryPage };
     if (pages[page]) pages[page].render(pageEl);
   },
 
