@@ -345,6 +345,19 @@ if (posBar) {
   } catch (e) { App.toast(e.message, 'error'); }
 };
 let botStatusInterval;
+    document.addEventListener('click', async e => {
+  if (e.target.id === 'bp-update-btn') {
+    const sl = parseFloat(document.getElementById('bp-sl').value) || null;
+    const tp = parseFloat(document.getElementById('bp-tp').value) || null;
+    try { await Api.updateSLTP(sl, tp); App.toast('SL/TP güncellendi', 'success'); }
+    catch(err) { App.toast(err.message, 'error'); }
+  }
+  if (e.target.id === 'bp-close-btn') {
+    if (!confirm('Pozisyonu kapatmak istediğinizden emin misiniz?')) return;
+    try { await Api.closePosition(); App.toast('Pozisyon kapatılıyor...', 'success'); }
+    catch(err) { App.toast(err.message, 'error'); }
+  }
+});
 Api.botStatus().then(s => {
   const btn = document.getElementById('bot-btn');
   const bar = document.getElementById('bot-status-bar');
