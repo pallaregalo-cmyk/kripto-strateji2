@@ -323,7 +323,7 @@ const StrategyPage = {
           botStatusInterval = setInterval(async () => {
             const s2 = await Api.botStatus();
             if (!s2.running) { clearInterval(botStatusInterval); btn.textContent = 'Botu Başlat'; btn.className = 'btn-outline btn-sm'; }
-            bar.textContent = s2.running ? `Sinyal: ${s2.last_signal} | SMA1: ${s2.sma1_val} | SMA2: ${s2.sma2_val} | Bakiye: ${s2.balance} USDT | İşlem: ${s2.trades}` : 'Bot durdu';
+            bar.textContent = s2.running ? `Sinyal: ${s2.last_signal} | Gösterge1: ${s2.sma1_val} | Gösterge2: ${s2.sma2_val} | Bakiye: ${s2.balance} USDT | İşlem: ${s2.trades}` : 'Bot durdu';
             const posBar = document.getElementById('bot-position-bar');
             if (posBar) {
               if (s2.running && s2.active_position) {
