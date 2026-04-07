@@ -20,6 +20,9 @@ class StrategyIn(BaseModel):
     stop_loss: float = 2.0
     take_profit: float = 4.0
     notes: str = ""
+    strategy_type: str = "sma"
+    bb_period: int = 20
+    bb_std: float = 2.0
 
 class BacktestIn(BaseModel):
     strategy_id: int
@@ -51,14 +54,14 @@ def create_strategy(
     current_user: dict = Depends(get_current_user),
     db: sqlite3.Connection = Depends(get_db)
 ):
-    cur = db.execute(
-        """INSERT INTO strategies
-           (user_id,name,symbol,timeframe,days,sma1,sma2,rsi_period,rsi_ob,rsi_os,stop_loss,take_profit,notes)
-           VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)""",
-        (current_user["id"], body.name, body.symbol, body.timeframe, body.days,
-         body.sma1, body.sma2, body.rsi_period, body.rsi_ob, body.rsi_os,
-         body.stop_loss, body.take_profit, body.notes)
-    )
+cur = db.execute(
+    """INSERT INTO strategies
+       (user_id,name,symbol,timeframe,days,sma1,sma2,rsi_period,rsi_ob,rsi_os,stop_loss,take_profit,notes,strategy_type,bb_period,bb_std)
+       VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
+    (current_user["id"], body.name, body.symbol, body.timeframe, body.days,
+     body.sma1, body.sma2, body.rsi_period, body.rsi_ob, body.rsi_os,
+     body.stop_loss, body.take_profit, body.notes, body.strategy_type, body.bb_period, body.bb_std)
+)
     db.commit()
     row = db.execute("SELECT * FROM strategies WHERE id=?", (cur.lastrowid,)).fetchone()
     return dict(row)
@@ -76,15 +79,18 @@ def update_strategy(
     if not existing:
         raise HTTPException(404, "Strateji bulunamadı")
     db.execute(
-        """UPDATE strategies SET
-           name=?,symbol=?,timeframe=?,days=?,sma1=?,sma2=?,rsi_period=?,
-           rsi_ob=?,rsi_os=?,stop_loss=?,take_profit=?,notes=?,
-           updated_at=datetime('now')
-           WHERE id=? AND user_id=?""",
-        (body.name, body.symbol, body.timeframe, body.days,
-         body.sma1, body.sma2, body.rsi_period, body.rsi_ob, body.rsi_os,
-         body.stop_loss, body.take_profit, body.notes, sid, current_user["id"])
-    )
+    """UPDATE strategies SET
+       name=?,symbol=?,timeframe=?,days=?,sma1=?,sma2=?,rsi_period=?,
+       rsi_ob=?,rsi_os=?,stop_loss=?,take_profit=?,notes=?,
+       strategy_type=?,bb_period=?,bb_std=?,
+       updated_at=datetime('now')
+       WHERE id=? AND user_id=?""",
+    (body.name, body.symbol, body.timeframe, body.days,
+     body.sma1, body.sma2, body.rsi_period, body.rsi_ob, body.rsi_os,
+     body.stop_loss, body.take_profit, body.notes,
+     body.strategy_type, body.bb_period, body.bb_std,
+     sid, current_user["id"])
+)
     db.commit()
     row = db.execute("SELECT * FROM strategies WHERE id=?", (sid,)).fetchone()
     return dict(row)
