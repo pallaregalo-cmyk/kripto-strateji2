@@ -442,7 +442,7 @@ if current_user["email"] != ADMIN_EMAIL:
 @router.post("/stop")
 def stop_bot(current_user: dict = Depends(get_current_user)):
     if current_user["email"] != "pallaregalo@gmail.com":
-    return {"running": False}
+        raise HTTPException(403, "Yetkisiz erisim")
     uid = current_user["id"]
     if uid not in active_bots or not active_bots[uid].get("running"):
         raise HTTPException(400, "Calisan bot yok")
