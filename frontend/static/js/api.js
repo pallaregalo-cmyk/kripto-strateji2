@@ -98,3 +98,12 @@ const Binance = {
 Api.startBot = (strategy_id, trade_amount) => Api.post('/api/bot/start', { strategy_id, trade_amount });
 Api.stopBot  = () => Api.post('/api/bot/stop');
 Api.botStatus = () => Api.get('/api/bot/status');
+Api.closePosition = () => Api.post('/api/bot/close-position');
+Api.updateSLTP = (sl, tp) => Api.post('/api/bot/update-sltp', { sl, tp });
+Api.tradeHistory = (symbol, start_date, end_date) => {
+  let q = '/api/bot/history?';
+  if (symbol) q += `symbol=${symbol}&`;
+  if (start_date) q += `start_date=${start_date}&`;
+  if (end_date) q += `end_date=${end_date}`;
+  return Api.get(q);
+};
