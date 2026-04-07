@@ -409,6 +409,9 @@ def start_bot(
     ).fetchone()
     if not strat:
         raise HTTPException(404, "Strateji bulunamadi")
+        ADMIN_EMAIL = "pallaregalo@gmail.com"
+if current_user["email"] != ADMIN_EMAIL:
+    raise HTTPException(403, "Bot kullanimi sadece admin hesabina ozgudur")
     if not get_api_key() or not get_secret_key():
         raise HTTPException(400, "Binance API key ayarlanmamis")
     strategy = dict(strat)
@@ -438,6 +441,8 @@ def start_bot(
 
 @router.post("/stop")
 def stop_bot(current_user: dict = Depends(get_current_user)):
+    if current_user["email"] != "pallaregalo@gmail.com":
+    return {"running": False}
     uid = current_user["id"]
     if uid not in active_bots or not active_bots[uid].get("running"):
         raise HTTPException(400, "Calisan bot yok")
@@ -447,6 +452,8 @@ def stop_bot(current_user: dict = Depends(get_current_user)):
 
 @router.post("/close-position")
 def close_position_manually(current_user: dict = Depends(get_current_user)):
+    if current_user["email"] != "pallaregalo@gmail.com":
+    return {"running": False}
     uid = current_user["id"]
     if uid not in active_bots or not active_bots[uid].get("running"):
         raise HTTPException(400, "Calisan bot yok")
@@ -470,6 +477,8 @@ def update_sltp(
 
 @router.get("/status")
 def bot_status(current_user: dict = Depends(get_current_user)):
+    if current_user["email"] != "pallaregalo@gmail.com":
+    return {"running": False}
     uid = current_user["id"]
     if uid not in active_bots:
         return {"running": False}
