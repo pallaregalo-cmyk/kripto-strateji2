@@ -510,7 +510,7 @@ def bot_loop(user_id, strategy):
                     else:
                         print(f"Golden Cross ama filtreler gecmedi: Hacim={vol_ok} RSI={rsi_val}")
 
-elif death_cross:
+        elif death_cross:
                     rsi_ok_sell = rsi_val is None or rsi_val < 50
                     if rsi_ok_sell:
                         signal = "SELL"
