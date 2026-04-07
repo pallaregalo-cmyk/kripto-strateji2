@@ -70,6 +70,21 @@ def init_db():
         theme           TEXT    DEFAULT 'auto',
         updated_at      TEXT    DEFAULT (datetime('now'))
     );
+
+    CREATE TABLE IF NOT EXISTS trade_history (
+        id           INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id      INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        symbol       TEXT    NOT NULL,
+        side         TEXT    NOT NULL,
+        entry_price  REAL    NOT NULL,
+        exit_price   REAL,
+        quantity     REAL    NOT NULL,
+        pnl          REAL,
+        pnl_pct      REAL,
+        close_reason TEXT,
+        opened_at    TEXT    DEFAULT (datetime('now')),
+        closed_at    TEXT
+    );
     """)
 
     conn.commit()
