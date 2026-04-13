@@ -220,7 +220,42 @@ const StrategyPage = {
           </div>
           <div class="card">
             <div class="card-title">Parametreler</div>
-            ${this.stratParamRows(s)}
+            ${this.stratParamRows(s)} stratParamRows(s) {
+  const t = s.strategy_type || 'sma';
+  const rsi = `
+    ${this.paramRow('rsiP','RSI Periyodu',2,30,s.rsi_period)}
+    ${this.paramRow('rsiOB','Aşırı Alım',55,90,s.rsi_ob)}
+    ${this.paramRow('rsiOS','Aşırı Satım',10,45,s.rsi_os)}`;
+  const risk = `
+    ${this.paramRow('sl','Stop Loss %',0.5,10,s.stop_loss,0.5)}
+    ${this.paramRow('tp','Take Profit %',0.5,20,s.take_profit,0.5)}`;
+  let specific = '';
+  if (t === 'sma') {
+    specific = `
+      ${this.paramRow('sma1','Kısa SMA',3,50,s.sma1)}
+      ${this.paramRow('sma2','Uzun SMA',5,200,s.sma2)}`;
+  } else if (t === 'bb') {
+    specific = `
+      ${this.paramRow('bbp','BB Periyodu',5,100,s.bb_period||20)}
+      ${this.paramRow('bbstd','Standart Sapma',0.5,5,s.bb_std||2.0,0.1)}`;
+  } else if (t === 'ema') {
+    specific = `
+      ${this.paramRow('ema1p','Kısa EMA',5,100,s.ema1||50)}
+      ${this.paramRow('ema2p','Uzun EMA',20,500,s.ema2||200)}`;
+  } else if (t === 'macd') {
+    specific = `
+      ${this.paramRow('macdf','MACD Hızlı EMA',3,50,s.macd_fast||12)}
+      ${this.paramRow('macds','MACD Yavaş EMA',5,100,s.macd_slow||26)}
+      ${this.paramRow('macdsig','Sinyal Periyodu',3,30,s.macd_signal||9)}
+      ${this.paramRow('ematrd','EMA Trend',10,500,s.ema_trend||200)}
+      ${this.paramRow('volp','Hacim Periyodu',5,100,s.vol_period||20)}`;
+  }
+  // Gizli input'lar — backtest için mevcut değerleri tutar
+  const hidden = `
+    <input type="hidden" id="sma1" value="${s.sma1||9}">
+    <input type="hidden" id="sma2" value="${s.sma2||21}">`;
+  return specific + rsi + risk + hidden;
+},
           </div>
           <div class="card">
             <div class="card-title">Backtest Sonuçları</div>
