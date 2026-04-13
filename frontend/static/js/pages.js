@@ -220,7 +220,9 @@ const StrategyPage = {
           </div>
           <div class="card">
             <div class="card-title">Parametreler</div>
-            ${this.stratParamRows(s)} stratParamRows(s) {
+            ${this.stratParamRows(s)}
+          </div> 
+            stratParamRows(s) {
   const t = s.strategy_type || 'sma';
   const rsi = `
     ${this.paramRow('rsiP','RSI Periyodu',2,30,s.rsi_period)}
