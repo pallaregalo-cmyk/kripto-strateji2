@@ -220,13 +220,7 @@ const StrategyPage = {
           </div>
           <div class="card">
             <div class="card-title">Parametreler</div>
-            ${this.paramRow('sma1','Kısa SMA',3,50,s.sma1)}
-            ${this.paramRow('sma2','Uzun SMA',5,200,s.sma2)}
-            ${this.paramRow('rsiP','RSI Periyodu',2,30,s.rsi_period)}
-            ${this.paramRow('rsiOB','Aşırı Alım',55,90,s.rsi_ob)}
-            ${this.paramRow('rsiOS','Aşırı Satım',10,45,s.rsi_os)}
-            ${this.paramRow('sl','Stop Loss %',0.5,10,s.stop_loss,0.5)}
-            ${this.paramRow('tp','Take Profit %',0.5,20,s.take_profit,0.5)}
+            ${this.stratParamRows(s)}
           </div>
           <div class="card">
             <div class="card-title">Backtest Sonuçları</div>
